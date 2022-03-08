@@ -11,25 +11,33 @@ public class Cart {
     private List<Item> items = new ArrayList<>();
 
     public boolean addItem(Item item) {
+        for (int i = 0; i < items.size(); i++) {
+            var currentItem = items.get(i);
+            if (currentItem.getProduct().equals(item.getProduct())) {
+                currentItem.setAmount(item.getAmount() + currentItem.getAmount());
+                return true;
+            }
+        }
         return items.add(item);
+
     }
 
     @Override
     public String toString() {
-        if (items.size() ==0){
+        if (items.size() == 0) {
             return "Empty Cart";
         }
         double total = 0;
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Cart -----------------\n"  );
+        stringBuilder.append("Cart -----------------\n");
 
         for (int i = 0; i < items.size(); i++) {
             stringBuilder.append(items.get(i).toString()).append("\n");
             total += items.get(i).getAmount() * items.get(i).getProduct().getPrice();
         }
-        stringBuilder.append("----------------------\n"  );
+        stringBuilder.append("----------------------\n");
 
-        stringBuilder.append("Total...\t\t\t" + total );
+        stringBuilder.append("Total...\t\t\t").append(total);
 
         return stringBuilder.toString();
     }

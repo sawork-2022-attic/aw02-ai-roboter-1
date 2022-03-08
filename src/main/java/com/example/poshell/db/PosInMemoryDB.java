@@ -1,7 +1,9 @@
 package com.example.poshell.db;
 
+import com.example.poshell.db.reader.posdb.PosDBReader;
 import com.example.poshell.model.Cart;
 import com.example.poshell.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Component
 public class PosInMemoryDB implements PosDB {
-    private List<Product> products = new ArrayList<>();
+    private final List<Product> products = new ArrayList<>();
 
     private Cart cart;
 
@@ -39,9 +41,12 @@ public class PosInMemoryDB implements PosDB {
         return null;
     }
 
-    private PosInMemoryDB() {
-        this.products.add(new Product("PD1", "iPhone 13", 8999));
-        this.products.add(new Product("PD2", "MacBook Pro", 29499));
+    @Autowired
+    private PosInMemoryDB(PosDBReader dbReader) {
+        List<Product> data = dbReader.read();
+        if (data != null) {
+            products.addAll(data);
+        }
     }
 
 }

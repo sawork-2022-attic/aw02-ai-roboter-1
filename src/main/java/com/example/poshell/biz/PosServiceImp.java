@@ -47,6 +47,8 @@ public class PosServiceImp implements PosService {
     @Override
     public boolean add(String productId, int amount) {
 
+        if (amount < 0) return false;
+
         Product product = posDB.getProduct(productId);
         if (product == null) return false;
 

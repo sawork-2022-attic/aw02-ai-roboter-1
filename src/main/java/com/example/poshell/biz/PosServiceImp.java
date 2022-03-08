@@ -46,6 +46,8 @@ public class PosServiceImp implements PosService {
 
     @Override
     public boolean add(String productId, int amount) {
+        if (getCart() == null)
+            return false;
 
         if (amount < 0) return false;
 
@@ -54,6 +56,25 @@ public class PosServiceImp implements PosService {
 
         this.getCart().addItem(new Item(product, amount));
         return true;
+    }
+
+    @Override
+    public boolean modify(String productId, int amount) {
+        if (getCart() == null)
+            return false;
+        if (amount == 0)
+            delete(productId);
+        if (amount < 0) {
+            return false;
+        }
+        return getCart().modifyItem(productId, amount);
+    }
+
+    @Override
+    public boolean delete(String productId) {
+        if (getCart() == null)
+            return false;
+        return getCart().deleteItem(productId);
     }
 
     @Override

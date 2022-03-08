@@ -1,48 +1,18 @@
-# POS in Shell
+# 分层架构的理解
+以POS Shell为例
 
-The demo shows a simple POS system with command line interface. 
+## 分层结构
 
-To run
+在POS Shell这个简单的系统中系统被分层四层，个人的理解这四层抽象程度应该按照model，db,biz(business)，cli顺序不断增加
+1. model, 主要复杂对数据库的中的数据模型进行反序列化抽象，就数据库或者文件中序列化数据抽象成java中类的组合形式,并加入数据的操作，这些操作需要满足数据自身的约束
+2. db,根据model的抽象进行数据库进行管理，使用model层提供的数据模型，向上层提供数据
+3. biz,业务层，使用db层提供的接口，上cli层提供业务操作的接口。在该层需要检查操作是否满足是否满足具体的业务要求。比如不能输入小于0的amount。
+4. cli，使用业务层提供的业务操作接口，向用户提供操作合适的接口
 
-```shell
-mvn clean spring-boot:run
-```
+## 在学习分层架构使用的过程遇到的问题
 
-Currently, it implements three commands which you can see using the `help` command.
+在使用分层机构时，需要确认每一层需要负责任务，一个任务可以在biz层完成，也可以在model完成。如何确定在哪一层完成呢？作业是根据该任务的耦合性来决定的，通常层数越底层变化越小，越上层变化的灵活性越大。
 
-```shell
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v2.5.7)
- 
-shell:>help
-AVAILABLE COMMANDS
+以修改amount的数量是否大于0，可以在biz层进行检查，也可以位与model层进行检查。但是对于修改cart中的item时，检查就只能位于biz层中。
 
-Built-In Commands
-        clear: Clear the shell screen.
-        exit, quit: Exit the shell.
-        help: Display help about available commands.
-        history: Display or save the history of previously run commands
-        script: Read and execute commands from a file.
-        stacktrace: Display the full stacktrace of the last error.
-
-Pos Command
-        a: Add a Product to Cart
-        n: New Cart
-        p: List Products
-```
-
-Everytime a customer come to make a purchase, use `n` to create a new cart and then use `a ${productid} ${amount}` to add a product to the cart.
-
-Please make the POS system robust and fully functional by implementing more commands, for instance, print/empty/modify cart.
-
-Implementing a PosDB with real database is very much welcome. 
-
-Please use asciinema (https://asciinema.org) to record a demo and submit the url in QQ group. 
-
-And please elaborate your understanding in layered systems via this homework in your README.md.
-
+然后最后使用的过程，我认为一个优秀的设计是不会出现跨层的操作。但是具体的系统这种情况就比较理想，就比如tcp/ip协议层。
